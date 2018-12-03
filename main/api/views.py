@@ -14,7 +14,8 @@ def api_routes(request, format=None):
 	id = 0
 	try:
 		record = Record.objects.first()
-		id = record.get('_id')
+		if record:
+			id = record._id
 	except:
 		pass
 
