@@ -11,10 +11,12 @@ def api_routes(request, format=None):
 	:param request:
 	:return: Response
 	"""
+	id = 0
 	try:
-		id = Record.objects.first()._id
-	except Record.DoesNotExist:
-		id = 0
+		record = Record.objects.first()
+		id = record._id
+	except:
+		pass
 
 	data = {
 		'List': '<a href=/api/list/>/api/list/</a>',
