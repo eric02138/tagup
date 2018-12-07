@@ -129,10 +129,11 @@ def record_create(request, format=None):
 				time_decimal = Decimal(time_int / 1000)
 				time_string = str(time_decimal)
 				request.data.timestamp = get_datetime_from_timestring(time_string)
+			print("request.data")
+			print(request.data)
 		except Exception as e:
 			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
 					status=status.HTTP_400_BAD_REQUEST)
-
 			
 	serializer = RecordSerializer(data=request.data)	
 	if serializer.is_valid():
@@ -153,7 +154,6 @@ def record_detail(request, pk, format=None):
 		record = Record.objects.get(pk=pk)
 	except Record.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
-
 	serializer = RecordSerializer(record)
 	return Response(serializer.data)
 
