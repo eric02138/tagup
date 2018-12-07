@@ -12,7 +12,7 @@ def get_datetime_from_timestring(timestring):
 	"""
 	Takes a timestring and returns a microsecond resolution datetime
 	:param: timestring
-	:return: datetime
+	:return: newly created timestring
 	"""
 	try:
 		time_float = float(timestring)
@@ -30,11 +30,14 @@ def get_datetime_from_timestring(timestring):
 		dt_obj = dt_obj + timedelta(microseconds=ms)
 		print("dt_obj")
 		print(dt_obj)
+		dt_str = dt_obj.strftime("%Y-%m-%dT%H:%M:%S.%f")
+		print("dt_str")
+		print(dt_str)
 	except Exception as e:
 		print("Error in function: ")
 		print(e)
 		raise
-	return dt_obj
+	return dt_str
 
 @api_view(['GET'])
 def api_routes(request, format=None):
