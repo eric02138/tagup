@@ -30,7 +30,9 @@ def get_datetime_from_timestring(timestring):
 		dt_obj = dt_obj + timedelta(microseconds=ms)
 		print("dt_obj")
 		print(dt_obj)
-		dt_str = dt_obj.strftime("%Y-%m-%dT%H:%M:%S.%f")
+		timeformat = "%Y-%m-%dT%H:%M:%S"
+		dt_str = dt_obj.strftime(timeformat)
+		dt_str = "{0}.{1}".format(dt_str, ms)
 		print("dt_str")
 		print(dt_str)
 	except Exception as e:
@@ -109,6 +111,8 @@ def record_create(request, format=None):
 		can be formatted into a date.
 		"""
 		try:
+			print("request.data")
+			print(request.data)
 			request.data.timestamp = get_datetime_from_timestring(ts)
 		except Exception as e:
 			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
