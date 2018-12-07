@@ -2,11 +2,13 @@ import time
 from datetime import datetime, timedelta
 from decimal import Decimal
 from math import modf
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from main.record.models import Record
-from main.api.serializers import RecordSerializer
+
+if __name__ != "__main__":
+	from rest_framework import status
+	from rest_framework.decorators import api_view
+	from rest_framework.response import Response
+	from main.record.models import Record
+	from main.api.serializers import RecordSerializer
 
 def get_datetime_from_timestring(timestring):
 	"""
@@ -111,10 +113,11 @@ def record_create(request, format=None):
 		Ok, now it's not a well-formatted date, so let's see if it's a decimal number that
 		can be formatted into a date.
 		"""
+		print("FLOAT")
 		try:
 			print("request.data")
 			print(request.data)
-			request.data.timestamp = get_datetime_from_timestring(ts)
+			request.data['timestamp'] = get_datetime_from_timestring(ts)
 		except Exception as e:
 			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
 					status=status.HTTP_400_BAD_REQUEST)
@@ -124,12 +127,13 @@ def record_create(request, format=None):
 		And hey, if timestamp is an int, and it's bigger than 9999999999 
 		and less than 1000000000000, then we must be dealing with the number of milliseconds 
 		"""
+		print("INT")
 		try:
 			time_float = int(ts)
 			if 9999999999 < time_int < 1000000000000:
 				time_decimal = Decimal(time_int / 1000)
 				time_string = str(time_decimal)
-				request.data.timestamp = get_datetime_from_timestring(time_string)
+				request.data['timestamp'] = get_datetime_from_timestring(time_string)
 			print("request.data")
 			print(request.data)
 		except Exception as e:
@@ -194,3 +198,8 @@ def record_delete(request, pk, format=None):
 
 	record.delete()
 	return Response(status=status.HTTP_204_NO_CONTENT)
+
+#if __name__ == "__main__":
+#	print("hello")
+#	result = get_datetime_from_timestring(1544209442.123112)
+#	print(result)
