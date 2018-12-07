@@ -18,29 +18,17 @@ def get_datetime_from_timestring(timestring):
 	"""
 	try:
 		time_float = float(timestring)
-		print("time_float")
-		print(time_float)
 		time_decimal = Decimal(time_float)
 		time_decimal = round(time_decimal, 6)
-		print("time_decimal")
-		print(time_decimal)
 		b, a = modf(time_decimal)
 		ms = round(b, 6)
 		ms = int(ms * 1000000)
-		print("ms")
-		print(ms)
 		dt_obj = datetime.fromtimestamp(time_decimal)
 		dt_obj = dt_obj + timedelta(microseconds=ms)
-		print("dt_obj")
-		print(dt_obj)
 		timeformat = "%Y-%m-%dT%H:%M:%S"
 		dt_str = dt_obj.strftime(timeformat)
 		dt_str = "{0}.{1}".format(dt_str, ms)
-		print("dt_str")
-		print(dt_str)
 	except Exception as e:
-		print("Error in function: ")
-		print(e)
 		raise
 	return dt_str
 
@@ -113,10 +101,7 @@ def record_create(request, format=None):
 		Ok, now it's not a well-formatted date, so let's see if it's a decimal number that
 		can be formatted into a date.
 		"""
-		print("FLOAT")
 		try:
-			print("request.data")
-			print(request.data)
 			request.data['timestamp'] = get_datetime_from_timestring(ts)
 		except Exception as e:
 			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
@@ -127,15 +112,12 @@ def record_create(request, format=None):
 		And hey, if timestamp is an int, and it's bigger than 9999999999 
 		and less than 1000000000000, then we must be dealing with the number of milliseconds 
 		"""
-		print("INT")
 		try:
-			time_float = int(ts)
+			time_int = int(ts)
 			if 9999999999 < time_int < 1000000000000:
 				time_decimal = Decimal(time_int / 1000)
 				time_string = str(time_decimal)
 				request.data['timestamp'] = get_datetime_from_timestring(time_string)
-			print("request.data")
-			print(request.data)
 		except Exception as e:
 			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
 					status=status.HTTP_400_BAD_REQUEST)
