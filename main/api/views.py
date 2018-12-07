@@ -24,6 +24,7 @@ def get_datetime_from_timestring(timestring):
 		print(time_decimal)
 		b, a = modf(time_decimal)
 		ms = round(b, 6)
+		ms = int(ms * 1000000)
 		print("ms")
 		print(ms)
 		dt_obj = datetime.fromtimestamp(time_decimal)
