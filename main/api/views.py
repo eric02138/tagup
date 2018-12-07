@@ -16,12 +16,20 @@ def get_datetime_from_timestring(timestring):
 	"""
 	try:
 		time_float = float(ts)
+		print("time_float")
+		print(time_float)
 		time_decimal = Decimal(time_float)
 		time_decimal = round(time_decimal, 6)
+		print("time_decimal")
+		print(time_decimal)
 		b, a = modf(time_decimal)
 		ms = round(b, 6)
+		print("ms")
+		print(ms)
 		dt_obj = datetime.fromtimestamp(time_decimal)
 		dt_obj = dt_obj + timedelta(microseconds=ms)
+		print("dt_obj")
+		print(dt_obj)
 	except:
 		raise
 	return dt_obj
@@ -71,8 +79,9 @@ def record_create(request, format=None):
 	:return: Response
 	:note: If the timestamp is an int or float, try to convert to timestamp, using mktime
 	"""
-
 	ts = request.data.get("timestamp")
+	print("ts")
+	print(ts)
 	try:
 		"""
 		first, see if the string input is in datetime format.  
@@ -81,6 +90,8 @@ def record_create(request, format=None):
 		if ":" == ts[-3:-2]:
 			ts = ts[:-3]+ts[-2:]   #annoying hack to make timezones format correctly
 		dt_obj = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f%z")
+		print("dt_obj")
+		print(dt_obj)
 	except:
 		"""
 		Ok, now it's not a well-formatted date, so let's see if it's a decimal number that
