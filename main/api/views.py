@@ -15,7 +15,7 @@ def get_datetime_from_timestring(timestring):
 	:return: datetime
 	"""
 	try:
-		time_float = float(ts)
+		time_float = float(timestring)
 		print("time_float")
 		print(time_float)
 		time_decimal = Decimal(time_float)
