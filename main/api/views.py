@@ -1,8 +1,30 @@
+import time
+from datetime import datetime, timedelta
+from decimal import Decimal
+from math import modf
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from main.record.models import Record
 from main.api.serializers import RecordSerializer
+
+def get_datetime_from_timestring(timestring):
+	"""
+	Takes a timestring and returns a microsecond resolution datetime
+	:param: timestring
+	:return: datetime
+	"""
+	try:
+		time_float = float(ts)
+		time_decimal = Decimal(time_float)
+		time_decimal = round(time_decimal, 6)
+		b, a = modf(time_decimal)
+		ms = round(b, 6)
+		dt_obj = datetime.fromtimestamp(time_decimal)
+		dt_obj = dt_obj + timedelta(microseconds=ms)
+	except:
+		raise
+	return dt_obj
 
 @api_view(['GET'])
 def api_routes(request, format=None):
@@ -47,8 +69,41 @@ def record_create(request, format=None):
 	:param request: data payload
 	:param format:  json, html
 	:return: Response
+	:note: If the timestamp is an int or float, try to convert to timestamp, using mktime
 	"""
-	serializer = RecordSerializer(data=request.data)
+
+	ts = request.data.get("timestamp")
+	try:
+		"""
+		first, see if the string input is in datetime format.  
+		If it is, then we don't have to do any conversion.
+		"""
+		if ":" == ts[-3:-2]:
+			ts = ts[:-3]+ts[-2:]   #annoying hack to make timezones format correctly
+		dt_obj = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f%z")
+	except:
+		"""
+		Ok, now it's not a well-formatted date, so let's see if it's a decimal number that
+		can be formatted into a date.
+		"""
+		try:
+			request.data.timestamp = get_datetime_from_timestring(ts)
+		except:
+			"""
+			And hey, if timestamp is a number, and it's bigger than 9999999999 
+			and less than 1000000000000, then we must be dealing with the number of milliseconds 
+			"""
+			try:
+				time_float = float(ts)
+				if 9999999999.0 < time_float < 1000000000000.0:
+					time_decimal = time_float / 1000
+					time_string = str(time_decimal)
+					request.data.timestamp = get_datetime_from_timestring(time_string)
+			except:
+				#return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+				raise
+			
+	serializer = RecordSerializer(data=request.data)	
 	if serializer.is_valid():
 		serializer.save()
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
