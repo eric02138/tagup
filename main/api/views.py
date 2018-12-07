@@ -82,17 +82,22 @@ def record_create(request, format=None):
 	ts = request.data.get("timestamp")
 	print("ts")
 	print(ts)
-	try:
-		"""
-		first, see if the string input is in datetime format.  
-		If it is, then we don't have to do any conversion.
-		"""
-		if ":" == ts[-3:-2]:
-			ts = ts[:-3]+ts[-2:]   #annoying hack to make timezones format correctly
-		dt_obj = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f%z")
-		print("dt_obj")
-		print(dt_obj)
-	except:
+	
+	if type(ts).__name__ == 'string':
+		try:
+			"""
+			first, see if the string input is in datetime format.  
+			If it is, then we don't have to do any conversion.
+			"""
+			if ":" == ts[-3:-2]:
+				ts = ts[:-3]+ts[-2:]   #annoying hack to make timezones format correctly
+			dt_obj = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f%z")
+			print("dt_obj")
+			print(dt_obj)
+		except:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	if type(ts).__name__ == 'float':
 		"""
 		Ok, now it's not a well-formatted date, so let's see if it's a decimal number that
 		can be formatted into a date.
@@ -100,19 +105,22 @@ def record_create(request, format=None):
 		try:
 			request.data.timestamp = get_datetime_from_timestring(ts)
 		except:
-			"""
-			And hey, if timestamp is a number, and it's bigger than 9999999999 
-			and less than 1000000000000, then we must be dealing with the number of milliseconds 
-			"""
-			try:
-				time_float = float(ts)
-				if 9999999999.0 < time_float < 1000000000000.0:
-					time_decimal = time_float / 1000
-					time_string = str(time_decimal)
-					request.data.timestamp = get_datetime_from_timestring(time_string)
-			except:
-				#return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-				raise
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+	if type(ts).__name__ == 'int':
+		"""
+		And hey, if timestamp is an int, and it's bigger than 9999999999 
+		and less than 1000000000000, then we must be dealing with the number of milliseconds 
+		"""
+		try:
+			time_float = int(ts)
+			if 9999999999 < time_int < 1000000000000:
+				time_decimal = Decimal(time_int / 1000)
+				time_string = str(time_decimal)
+				request.data.timestamp = get_datetime_from_timestring(time_string)
+		except:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 			
 	serializer = RecordSerializer(data=request.data)	
 	if serializer.is_valid():
