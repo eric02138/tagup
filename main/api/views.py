@@ -30,7 +30,9 @@ def get_datetime_from_timestring(timestring):
 		dt_obj = dt_obj + timedelta(microseconds=ms)
 		print("dt_obj")
 		print(dt_obj)
-	except:
+	except Exception, e:
+		print("Error in function: ")
+		print(e)
 		raise
 	return dt_obj
 
@@ -94,8 +96,9 @@ def record_create(request, format=None):
 			dt_obj = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f%z")
 			print("dt_obj")
 			print(dt_obj)
-		except:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		except Exception, e:
+			return Response("Sorry, but {0} cannot be formatted into a datetime: {1}".format(ts, e), 
+					status=status.HTTP_400_BAD_REQUEST)
 
 	if type(ts).__name__ == 'float':
 		"""
@@ -104,8 +107,9 @@ def record_create(request, format=None):
 		"""
 		try:
 			request.data.timestamp = get_datetime_from_timestring(ts)
-		except:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		except Exception, e:
+			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
+					status=status.HTTP_400_BAD_REQUEST)
 
 	if type(ts).__name__ == 'int':
 		"""
@@ -118,8 +122,9 @@ def record_create(request, format=None):
 				time_decimal = Decimal(time_int / 1000)
 				time_string = str(time_decimal)
 				request.data.timestamp = get_datetime_from_timestring(time_string)
-		except:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		except Exception, e:
+			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
+					status=status.HTTP_400_BAD_REQUEST)
 
 			
 	serializer = RecordSerializer(data=request.data)	
