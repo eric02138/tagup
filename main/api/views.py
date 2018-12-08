@@ -99,7 +99,7 @@ def record_detail(request, pk, format=None):
 		record = Record.objects.get(pk=pk)
 	except Record.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
-	serializer = RecordSerializer(record, request=request)
+	serializer = RecordSerializer(record, context=request)
 	return Response(serializer.data)
 
 @api_view(['PUT'])
