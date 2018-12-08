@@ -2,35 +2,11 @@ import time
 from datetime import datetime, timedelta
 from decimal import Decimal
 from math import modf
-
-if __name__ != "__main__":
-	from rest_framework import status
-	from rest_framework.decorators import api_view
-	from rest_framework.response import Response
-	from main.record.models import Record
-	from main.api.serializers import RecordSerializer
-
-def get_datetime_from_timestring(timestring):
-	"""
-	Takes a timestring and returns a microsecond resolution datetime
-	:param: timestring
-	:return: newly created timestring
-	"""
-	try:
-		time_float = float(timestring)
-		time_decimal = Decimal(time_float)
-		time_decimal = round(time_decimal, 6)
-		b, a = modf(time_decimal)
-		ms = round(b, 6)
-		ms = int(ms * 1000000)
-		dt_obj = datetime.fromtimestamp(time_decimal)
-		dt_obj = dt_obj + timedelta(microseconds=ms)
-		timeformat = "%Y-%m-%dT%H:%M:%S"
-		dt_str = dt_obj.strftime(timeformat)
-		dt_str = "{0}.{1}".format(dt_str, ms)
-	except Exception as e:
-		raise
-	return dt_str
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from main.record.models import Record
+from main.api.serializers import RecordSerializer
 
 @api_view(['GET'])
 def api_routes(request, format=None):
@@ -78,8 +54,6 @@ def record_create(request, format=None):
 	:note: If the timestamp is an int or float, try to convert to timestamp, using mktime
 	"""
 	ts = request.data.get("timestamp")
-	print("ts")
-	print(ts)
 	
 	if type(ts).__name__ == 'string':
 		try:
@@ -90,34 +64,19 @@ def record_create(request, format=None):
 			if ":" == ts[-3:-2]:
 				ts = ts[:-3]+ts[-2:]   #annoying hack to make timezones format correctly
 			dt_obj = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f%z")
-			print("dt_obj")
-			print(dt_obj)
 		except Exception as e:
 			return Response("Sorry, but {0} cannot be formatted into a datetime: {1}".format(ts, e), 
 					status=status.HTTP_400_BAD_REQUEST)
 
-	if type(ts).__name__ == 'float':
-		"""
-		Ok, now it's not a well-formatted date, so let's see if it's a decimal number that
-		can be formatted into a date.
-		"""
-		try:
-			request.data['timestamp'] = get_datetime_from_timestring(ts)
-		except Exception as e:
-			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
-					status=status.HTTP_400_BAD_REQUEST)
-
 	if type(ts).__name__ == 'int':
 		"""
-		And hey, if timestamp is an int, and it's bigger than 9999999999 
+		If timestamp is an int, and it's bigger than 9999999999 
 		and less than 1000000000000, then we must be dealing with the number of milliseconds 
 		"""
 		try:
 			time_int = int(ts)
-			if 9999999999 < time_int < 1000000000000:
-				time_decimal = Decimal(time_int / 1000)
-				time_string = str(time_decimal)
-				request.data['timestamp'] = get_datetime_from_timestring(time_string)
+			if 9999999999 < time_int < 1000000000000: #check for reasonable-ness
+				request.data['timestamp'] = get_datetime_from_int(time_int)
 		except Exception as e:
 			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
 					status=status.HTTP_400_BAD_REQUEST)
@@ -181,7 +140,27 @@ def record_delete(request, pk, format=None):
 	record.delete()
 	return Response(status=status.HTTP_204_NO_CONTENT)
 
+def get_datetime_from_int(time_int):
+	"""
+	Takes an int, returns a datetime (with microsecs)
+	:param time_int:
+	:return: datetime
+	"""
+	try:
+		time_decimal = Decimal(time_int / 1000)
+		time_decimal = round(time_decimal, 6)
+		micros, seconds = modf(time_decimal)  
+		micros = round(micros, 6)             #deal with floating point nonsense
+		micros = int(micros * 1000000)        #micros stars out like "0.122121"
+		dt_obj = datetime.fromtimestamp(time_decimal) #No microseconds?  What?
+		timeformat = "%Y-%m-%dT%H:%M:%S"
+		dt_str = dt_obj.strftime(timeformat)
+		dt_str = "{0}.{1}".format(dt_str, micros) #because timedelta adding micros didnt work
+	except Exception as e:
+		raise
+	return dt_str
+
+
 #if __name__ == "__main__":
 #	print("hello")
-#	result = get_datetime_from_timestring(1544209442.123112)
-#	print(result)
+#	result = get_datetime_from_int(1544281463226)
