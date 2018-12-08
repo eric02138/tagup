@@ -2,7 +2,7 @@ from datetime import datetime
 from rest_framework import serializers
 from main.record.models import Record
 
-class RecordSerializer(serializers.Serializer, context={'request': request}):
+class RecordSerializer(serializers.Serializer):
 	_id = serializers.IntegerField(read_only=True)
 	timestamp = serializers.DateTimeField(required=True)
 	value1 = serializers.IntegerField(required=True)
@@ -23,6 +23,9 @@ class RecordSerializer(serializers.Serializer, context={'request': request}):
 		return instance
 	
 	def to_respresentation(self, instance):
+		request = self.context.get("request", [])
+		print("request")
+		print(request._asdict())
 		if request.data.get("format") != "datestring":
 			return {
 				'_id': instance._id,

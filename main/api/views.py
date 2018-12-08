@@ -54,7 +54,6 @@ def record_create(request, format=None):
 	:note: If the timestamp is an int or float, try to convert to timestamp, using mktime
 	"""
 	ts = request.data.get("timestamp")
-	
 	if type(ts).__name__ == 'string':
 		try:
 			"""
@@ -100,7 +99,7 @@ def record_detail(request, pk, format=None):
 		record = Record.objects.get(pk=pk)
 	except Record.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
-	serializer = RecordSerializer(record)
+	serializer = RecordSerializer(record, request=request)
 	return Response(serializer.data)
 
 @api_view(['PUT'])
