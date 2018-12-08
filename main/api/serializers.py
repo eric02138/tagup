@@ -26,7 +26,7 @@ class RecordSerializer(serializers.Serializer):
 		request = self.context.get("request", [])
 		print("request")
 		print(request._asdict())
-		if request.data.get("format") != "datestring":
+		if request.data.get("format") == "datestring":
 			return {
 				'_id': instance._id,
 				'timestamp': instance.timestamp,
