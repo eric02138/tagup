@@ -22,7 +22,7 @@ class RecordSerializer(serializers.Serializer):
 		instance.save()
 		return instance
 	
-	def to_respresentation(self, instance):
+	def to_representation(self, instance):
 		request = self.context.get("request", [])
 		print("request")
 		print(request._asdict())
