@@ -41,7 +41,7 @@ def record_list(request, format=None):
 	:return: Response
 	"""
 	records = Record.objects.order_by('-lastModificationDate').all()
-	serializer = RecordSerializer(records, many=True)
+	serializer = RecordSerializer(records, many=True, context={'request': request})
 	return Response(serializer.data)
 
 @api_view(['POST'])
