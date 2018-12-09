@@ -27,7 +27,7 @@ class RecordSerializer(serializers.Serializer):
 		print("request")
 		print(request)
 		print(request.__dict__)
-		if 'data' in request and request.data.get("format") == "datestring":
+		if request.get("data") and request.data.get("format") == "datestring":
 			print("r.data")
 			print(request.data.__dict__)
 			return {
