@@ -91,14 +91,19 @@ def record_create(request, format=None):
 		If timestamp is an int, and it's bigger than 9999999999 
 		and less than 1000000000000, then we must be dealing with the number of milliseconds 
 		"""
+		print("ts")
+		print(ts)
 		try:
 			time_int = int(ts)
 			if 9999999999 < time_int < 1000000000000: #check for reasonable-ness
+				print("in if")
 				request.data['timestamp'] = get_datetime_from_int(time_int)
 		except Exception as e:
 			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
 					status=status.HTTP_400_BAD_REQUEST)
 			
+	print("request.data")
+	print(request.data)
 	serializer = RecordSerializer(data=request.data)	
 	if serializer.is_valid():
 		serializer.save()
@@ -175,16 +180,36 @@ def get_datetime_from_int(time_int):
 	:param time_int:
 	:return: datetime
 	"""
+	print("time_int")
+	print(time_int)
 	try:
 		time_decimal = Decimal(time_int / 1000)
+		print("time_decimal")
+		print(time_decimal)
 		time_decimal = round(time_decimal, 6)
-		micros, seconds = modf(time_decimal)  
+		print("time_decimal after rounding")
+		print(time_decimal)
+		micros, seconds = modf(time_decimal)
+		print("micros")
+		print(micros)
+		print("seconds")
+		print(seconds)
 		micros = round(micros, 6)             #deal with floating point nonsense
+		print("micros after rounding")
+		print(micros)
 		micros = int(micros * 1000000)        #micros stars out like "0.122121"
+		print("micros as int")
+		print(micros)
 		dt_obj = datetime.fromtimestamp(time_decimal) #No microseconds?  What?
+		print("dt_obj")
+		print(dt_obj)
 		timeformat = "%Y-%m-%dT%H:%M:%S"
 		dt_str = dt_obj.strftime(timeformat)
+		print("dt_str")
+		print(dt_str)
 		dt_str = "{0}.{1}".format(dt_str, micros) #because timedelta adding micros didnt work
+		print("dt_str 2")
+		print(dt_str)
 	except Exception as e:
 		raise
 	return dt_str
