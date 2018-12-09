@@ -23,13 +23,12 @@ class RecordSerializer(serializers.Serializer):
 		return instance
 	
 	def to_representation(self, instance):
-		request = self.context.get("request")
-		print("request")
-		print(request)
-		print(request.__dict__)
-		if request.data and request.data.get("format") == "datestring":
-			print("r.data")
-			print(request.data.__dict__)
+		datestring = self.context.get("datestring")
+		print("datestring")
+		print(datestring)
+		#if request.data and request.data.get("format") == "datestring":
+		if datestring:
+			print("show as formatted date")
 			return {
 				'_id': instance._id,
 				'timestamp': instance.timestamp,
@@ -38,8 +37,6 @@ class RecordSerializer(serializers.Serializer):
 				'value3': instance.value3
 				}
 		else:
-			#timeformat = "%Y-%m-%dT%H:%M:%S.%f"
-			#dt_obj = datetime.strptime(instance.timestamp, timeformat)
 			timestamp = instance.timestamp.timestamp()
 			milliseconds = round(timestamp * 1000)
 			return {
