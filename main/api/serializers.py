@@ -24,8 +24,6 @@ class RecordSerializer(serializers.Serializer):
 	
 	def to_representation(self, instance):
 		display = self.context.get("display")
-		print("display")
-		print(display)
 		#if request.data and request.data.get("format") == "datestring":
 		if display == "datestring":
 			print("show as formatted date")
@@ -46,4 +44,3 @@ class RecordSerializer(serializers.Serializer):
 				'value2': instance.value2,
 				'value3': instance.value3
 				}
-		
