@@ -103,7 +103,7 @@ def record_detail(request, pk, format=None):
 	print("request.query_params")
 	print(request.query_params)
 	print(request.query_params.__dict__)
-	display = request.query_params.get('display', None)
+	display = request.query_params.get('display')
 	print("display: ", display)
 	#serializer = RecordSerializer(record, context={'request': request})
 	serializer = RecordSerializer(record, context={'display': display})
