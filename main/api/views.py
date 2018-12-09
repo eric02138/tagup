@@ -73,9 +73,6 @@ def record_create(request, format=None):
 	:note: If the timestamp is an int or float, try to convert to timestamp, using mktime
 	"""
 	ts = request.data.get("timestamp")
-	print("ts type")
-
-	print(type(ts).__name__)
 	if type(ts).__name__ == 'string':
 		try:
 			"""
@@ -94,8 +91,6 @@ def record_create(request, format=None):
 		If timestamp is an int, and it's bigger than 9999999999 
 		and less than 1000000000000, then we must be dealing with the number of milliseconds 
 		"""
-		print("ts")
-		print(ts)
 		try:
 			time_int = int(ts)
 			if 999999999999 < time_int < 10000000000000: #check for reasonable-ness
@@ -148,7 +143,7 @@ def record_modify(request, pk, format=None):
 		"""
 		try:
 			time_int = int(ts)
-			if 9999999999 < time_int < 1000000000000: #check for reasonable-ness
+			if 999999999999 < time_int < 10000000000000: #check for reasonable-ness
 				request.data['timestamp'] = get_datetime_from_int(time_int)
 		except Exception as e:
 			return Response("Sorry, couldn't convert {0} into datetime: {1}".format(ts, e), 
