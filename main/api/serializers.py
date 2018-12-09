@@ -35,9 +35,9 @@ class RecordSerializer(serializers.Serializer):
 				'value3': instance.value3
 				}
 		else:
-			timeformat = "%Y-%m-%dT%H:%M:%S.%f"
-			dt_obj = datetime.strptime(instance.timestamp, timeformat)
-			timestamp = dt_obj.timestamp()
+			#timeformat = "%Y-%m-%dT%H:%M:%S.%f"
+			#dt_obj = datetime.strptime(instance.timestamp, timeformat)
+			timestamp = instance.timestamp.timestamp()
 			milliseconds = round(timestamp * 1000)
 			return {
 				'_id': instance._id,
