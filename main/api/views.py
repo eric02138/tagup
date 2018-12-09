@@ -100,6 +100,9 @@ def record_detail(request, pk, format=None):
 		record = Record.objects.get(pk=pk)
 	except Record.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
+	print("request.query_params")
+	print(request.query_params)
+	print(request.query_params.__dict__)
 	datestring = request.query_params.get('datestring', None)
 	#serializer = RecordSerializer(record, context={'request': request})
 	serializer = RecordSerializer(record, context={'datestring': datestring})
