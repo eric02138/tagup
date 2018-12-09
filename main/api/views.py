@@ -40,7 +40,7 @@ def record_list(request, format=None):
 	:param request:
 	:return: Response
 	"""
-	datestring = self.request.query_params.get('datestring', None)
+	datestring = request.query_params.get('datestring', None)
 	records = Record.objects.order_by('-lastModificationDate').all()
 	serializer = RecordSerializer(records, many=True, context={'datestring': datestring})
 	return Response(serializer.data)
@@ -100,7 +100,7 @@ def record_detail(request, pk, format=None):
 		record = Record.objects.get(pk=pk)
 	except Record.DoesNotExist:
 		return Response(status=status.HTTP_404_NOT_FOUND)
-	datestring = self.request.query_params.get('datestring', None)
+	datestring = request.query_params.get('datestring', None)
 	#serializer = RecordSerializer(record, context={'request': request})
 	serializer = RecordSerializer(record, context={'datestring': datestring})
 	return Response(serializer.data)
