@@ -103,10 +103,10 @@ def record_detail(request, pk, format=None):
 	print("request.query_params")
 	print(request.query_params)
 	print(request.query_params.__dict__)
-	datestring = request.query_params.get('datestring', None)
-	print("datestring: ", datestring)
+	display = request.query_params.get('display', None)
+	print("display: ", display)
 	#serializer = RecordSerializer(record, context={'request': request})
-	serializer = RecordSerializer(record, context={'datestring': datestring})
+	serializer = RecordSerializer(record, context={'display': display})
 	return Response(serializer.data)
 
 @api_view(['PUT'])

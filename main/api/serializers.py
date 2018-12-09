@@ -23,11 +23,11 @@ class RecordSerializer(serializers.Serializer):
 		return instance
 	
 	def to_representation(self, instance):
-		datestring = self.context.get("datestring")
-		print("datestring")
-		print(datestring)
+		display = self.context.get("display")
+		print("display")
+		print(display)
 		#if request.data and request.data.get("format") == "datestring":
-		if datestring:
+		if display == "datestring":
 			print("show as formatted date")
 			return {
 				'_id': instance._id,
