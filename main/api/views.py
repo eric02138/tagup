@@ -40,9 +40,9 @@ def record_list(request, format=None):
 	:param request:
 	:return: Response
 	"""
-	datestring = request.query_params.get('datestring', None)
+	display = request.query_params.get('display')
 	records = Record.objects.order_by('-lastModificationDate').all()
-	serializer = RecordSerializer(records, many=True, context={'datestring': datestring})
+	serializer = RecordSerializer(records, many=True, context={'display': display})
 	return Response(serializer.data)
 
 @api_view(['POST'])
