@@ -73,6 +73,8 @@ def record_create(request, format=None):
 	:note: If the timestamp is an int or float, try to convert to timestamp, using mktime
 	"""
 	ts = request.data.get("timestamp")
+	print("ts type")
+	print(type(ts).__name__)
 	if type(ts).__name__ == 'string':
 		try:
 			"""
