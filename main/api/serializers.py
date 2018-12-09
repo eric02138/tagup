@@ -23,9 +23,10 @@ class RecordSerializer(serializers.Serializer):
 		return instance
 	
 	def to_representation(self, instance):
-		request = self.context.get("request", [])
+		request = self.context.get("request")
 		print("request")
 		print(request)
+		print(request.__dict__)
 		if 'data' in request and request.data.get("format") == "datestring":
 			print("r.data")
 			print(request.data.__dict__)
