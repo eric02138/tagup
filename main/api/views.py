@@ -74,6 +74,7 @@ def record_create(request, format=None):
 	"""
 	ts = request.data.get("timestamp")
 	print("ts type")
+
 	print(type(ts).__name__)
 	if type(ts).__name__ == 'string':
 		try:
