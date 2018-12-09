@@ -98,7 +98,7 @@ def record_create(request, format=None):
 		print(ts)
 		try:
 			time_int = int(ts)
-			if 9999999999 < time_int < 1000000000000: #check for reasonable-ness
+			if 999999999999 < time_int < 10000000000000: #check for reasonable-ness
 				print("in if")
 				request.data['timestamp'] = get_datetime_from_int(time_int)
 		except Exception as e:
